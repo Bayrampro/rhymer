@@ -1,7 +1,5 @@
 import 'dart:async';
 
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rhymer/features/FavouritesScreen/bloc/favourite_rhymes_bloc.dart';
@@ -17,7 +15,6 @@ class FavouritesScreen extends StatefulWidget {
 }
 
 class _FavouritesScreenState extends State<FavouritesScreen> {
-
   @override
   void initState() {
     BlocProvider.of<FavouriteRhymesBloc>(context).add(LoadFavouriteRhymes());
@@ -31,46 +28,47 @@ class _FavouritesScreenState extends State<FavouritesScreen> {
         SliverAppBar(
           floating: true,
           snap: true,
-          title: Text('Favourites'),
+          title: const Text('Favourites'),
           centerTitle: true,
           backgroundColor: Theme.of(context).canvasColor,
           surfaceTintColor: Colors.transparent,
         ),
-        SliverToBoxAdapter(child: SizedBox(height: 5,),),
+        const SliverToBoxAdapter(
+          child: SizedBox(
+            height: 5,
+          ),
+        ),
         BlocBuilder<FavouriteRhymesBloc, FavouriteRhymesState>(
             builder: (context, state) {
-              if(state is FavouriteRhymesLoaded) {
-                return SliverList.builder(
-                    itemCount: state.favouriteRhymes.length,
-                    itemBuilder: (context, index) =>
-                        RhymeList(
-                          isFavourite: true,
-                          rhyme: state.favouriteRhymes[index].favouriteWord,
-                          sourceWord: state.favouriteRhymes[index].word,
-                          onTap: () async{
-                            final completer = Completer();
-                            final toggleBloc = BlocProvider.of<RhymesListBloc>(context);
-                            final favouriteBloc = BlocProvider.of<FavouriteRhymesBloc>(context);
-                            toggleBloc.add(
-                                ToggleFavouriteEvent(
-                                  completer,
-                                  id: state.favouriteRhymes[index].id,
-                                  word: state.favouriteRhymes[index].word,
-                                  favouriteWord: state.favouriteRhymes[index].favouriteWord,
-                                )
-                            );
-                            await completer.future;
-                            favouriteBloc.add(LoadFavouriteRhymes());
-                          },
-                        )
-                );
-              }
-              return SliverFillRemaining(
-                child: CircularProgressIndicator(),
-              );
-            }
-        ),
-
+          if (state is FavouriteRhymesLoaded) {
+            return SliverList.builder(
+                itemCount: state.favouriteRhymes.length,
+                itemBuilder: (context, index) => RhymeList(
+                      isFavourite: true,
+                      rhyme: state.favouriteRhymes[index].favouriteWord,
+                      sourceWord: state.favouriteRhymes[index].word,
+                      onTap: () async {
+                        final completer = Completer();
+                        final toggleBloc =
+                            BlocProvider.of<RhymesListBloc>(context);
+                        final favouriteBloc =
+                            BlocProvider.of<FavouriteRhymesBloc>(context);
+                        toggleBloc.add(ToggleFavouriteEvent(
+                          completer,
+                          id: state.favouriteRhymes[index].id,
+                          word: state.favouriteRhymes[index].word,
+                          favouriteWord:
+                              state.favouriteRhymes[index].favouriteWord,
+                        ));
+                        await completer.future;
+                        favouriteBloc.add(LoadFavouriteRhymes());
+                      },
+                    ));
+          }
+          return const SliverFillRemaining(
+            child: CircularProgressIndicator(),
+          );
+        }),
       ],
     );
   }
